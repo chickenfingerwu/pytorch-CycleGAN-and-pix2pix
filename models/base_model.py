@@ -156,14 +156,17 @@ class BaseModel(ABC):
                 net = getattr(self, 'net' + name)
 
                 if len(self.gpu_ids) > 0 and torch.cuda.is_available():
-                    #torch.save(net.module.cpu().state_dict(), save_path)
-                    torch.save(net.module.cpu().state_dict(), path)
+                    if epoch == 'latest':
+                      torch.save(net.module.cpu().state_dict(), path)
+                    else:
+                      torch.save(net.module.cpu().state_dict(), save_path)
                     net.cuda(self.gpu_ids[0])
                 else:
-                    #torch.save(net.cpu().state_dict(), save_path)
-
-                    #Save to my Google Drive
-                    torch.save(net.cpu().state_dict(), path)
+                    if epoch == 'latest':
+                      #Save to my Google Drive
+                      torch.save(net.cpu().state_dict(), path)
+                    else:
+                      torch.save(net.cpu().state_dict(), save_path)
 
     def __patch_instance_norm_state_dict(self, state_dict, module, keys, i=0):
         """Fix InstanceNorm checkpoints incompatibility (prior to 0.4)"""
