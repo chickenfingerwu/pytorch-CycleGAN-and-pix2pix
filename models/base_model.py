@@ -150,13 +150,20 @@ class BaseModel(ABC):
             if isinstance(name, str):
                 save_filename = '%s_net_%s.pth' % (epoch, name)
                 save_path = os.path.join(self.save_dir, save_filename)
+
+                #path to Google Drive
+                path = F"/content/gdrive/My Drive/%s" % save_filename
                 net = getattr(self, 'net' + name)
 
                 if len(self.gpu_ids) > 0 and torch.cuda.is_available():
-                    torch.save(net.module.cpu().state_dict(), save_path)
+                    #torch.save(net.module.cpu().state_dict(), save_path)
+                    torch.save(net.module.cpu().state_dict(), path)
                     net.cuda(self.gpu_ids[0])
                 else:
-                    torch.save(net.cpu().state_dict(), save_path)
+                    #torch.save(net.cpu().state_dict(), save_path)
+
+                    #Save to my Google Drive
+                    torch.save(net.cpu().state_dict(), path)
 
     def __patch_instance_norm_state_dict(self, state_dict, module, keys, i=0):
         """Fix InstanceNorm checkpoints incompatibility (prior to 0.4)"""
@@ -180,8 +187,11 @@ class BaseModel(ABC):
         """
         for name in self.model_names:
             if isinstance(name, str):
+
                 load_filename = '%s_net_%s.pth' % (epoch, name)
-                load_path = os.path.join(self.save_dir, load_filename)
+                #load_path = os.path.join(self.save_dir, load_filename)
+
+                load_path = F"/content/gdrive/My Drive/%s" % load_filename
                 net = getattr(self, 'net' + name)
                 if isinstance(net, torch.nn.DataParallel):
                     net = net.module
@@ -227,3 +237,4 @@ class BaseModel(ABC):
             if net is not None:
                 for param in net.parameters():
                     param.requires_grad = requires_grad
+
