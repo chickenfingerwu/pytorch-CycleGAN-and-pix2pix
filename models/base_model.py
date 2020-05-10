@@ -157,6 +157,7 @@ class BaseModel(ABC):
 
                 if len(self.gpu_ids) > 0 and torch.cuda.is_available():
                     if epoch == 'latest':
+                      #Save to my Google Drive
                       torch.save(net.module.cpu().state_dict(), path)
                     
                     torch.save(net.module.cpu().state_dict(), save_path)
